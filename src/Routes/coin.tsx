@@ -1,4 +1,4 @@
-import { useParams } from "react-router";
+import { useHistory, useParams } from "react-router";
 import styled from "styled-components";
 import { Link, useLocation, useRouteMatch } from "react-router-dom";
 import { Switch, Route } from "react-router-dom";
@@ -6,15 +6,19 @@ import Price from "./Price";
 import Chart from "./Chart";
 import { useQuery } from "react-query";
 import { fetchCoinInfo, fetchCoinTickers } from "../api";
+import { Helmet } from "react-helmet";
+
 const Title = styled.h1`
   color: ${(props) => props.theme.accentColor};
-  font-size: 48px;
+  font-size: 36px;
+  margin-right: 7px;
 `;
 
 const Container = styled.div`
   width: 100%;
   max-width: 480px;
   margin: 0 auto;
+  position: relative;
 `;
 
 const Header = styled.header`
@@ -75,12 +79,30 @@ const Tab = styled.span<{ isActive: Boolean }>`
   }
 `;
 
+const GoBack = styled.span`
+  font-size: 20px;
+  position: absolute;
+  top: 17px;
+  padding: 13px;
+  &:hover {
+    color: green;
+  }
+  cursor: pointer;
+`;
+
+const CoinImage = styled.img`
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+`;
+
 interface RouteParams {
   coinId: string;
 }
 
 interface RouteState {
   name: string;
+  coinId: string;
 }
 interface InfoData {
   id: string;
@@ -142,23 +164,36 @@ function Coin() {
   const { state } = useLocation<RouteState>();
   const priceMatch = useRouteMatch(`/${coinId}/price`);
   const chartMatch = useRouteMatch(`/${coinId}/chart`);
-
+  const history = useHistory();
+  console.log(state);
   const { data: infoData, isLoading: infoLoading } = useQuery<InfoData>(
     ["Info", coinId],
     () => fetchCoinInfo(coinId)
   );
   const { data: tickersData, isLoading: tickersLoading } = useQuery<PriceData>(
     ["Tickers", coinId],
-    () => fetchCoinTickers(coinId)
+    () => fetchCoinTickers(coinId),
+    { refetchInterval: 5000 }
   );
+
   const loading = infoLoading || tickersLoading;
   return (
     <Container>
+      <Helmet>
+        <title>
+          {state?.name ? state.name : loading ? "Loading" : infoData?.name}
+        </title>
+      </Helmet>
+      <GoBack onClick={() => history.push(`/`)}>↩︎</GoBack>
       <Header>
         <Title>
           {state?.name ? state.name : loading ? "Loading" : infoData?.name}
         </Title>
+        <CoinImage
+          src={`https://cryptocurrencyliveprices.com/img/${coinId}.png`}
+        />
       </Header>
+
       {loading ? (
         <Loader>Loading...</Loader>
       ) : (
@@ -173,14 +208,14 @@ function Coin() {
               <span>${infoData?.symbol}</span>
             </OverviewItem>
             <OverviewItem>
-              <span>Open Source:</span>
-              <span>{infoData?.open_source ? "Yes" : "No"}</span>
+              <span>Price:</span>
+              <span>${tickersData?.quotes.USD.price.toFixed(3)}</span>
             </OverviewItem>
           </Overview>
           <Description>{infoData?.description}</Description>
           <Overview>
             <OverviewItem>
-              <span>Total Suply:</span>
+              <span>Total Supply:</span>
               <span>{tickersData?.total_supply}</span>
             </OverviewItem>
             <OverviewItem>

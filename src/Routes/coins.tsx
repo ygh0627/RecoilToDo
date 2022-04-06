@@ -2,6 +2,7 @@ import { useQuery } from "react-query";
 import { Link } from "react-router-dom";
 import styled from "styled-components";
 import { fetchCoins } from "../api";
+import { Helmet } from "react-helmet";
 
 const Title = styled.h1`
   color: ${(props) => props.theme.accentColor};
@@ -74,6 +75,9 @@ function Coins() {
 
   return (
     <Container>
+      <Helmet>
+        <title>Coins</title>
+      </Helmet>
       <Header>
         <Title>Coins</Title>
       </Header>
@@ -84,7 +88,10 @@ function Coins() {
           {data?.slice(0, 100).map((coin) => (
             <Coin key={coin.id}>
               <Link
-                to={{ pathname: `/${coin.id}`, state: { name: coin.name } }}
+                to={{
+                  pathname: `/${coin.id}`,
+                  state: { name: coin.name, coinId: coin.id },
+                }}
               >
                 <CoinWrapper>
                   <CoinImage
