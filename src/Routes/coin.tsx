@@ -165,7 +165,6 @@ function Coin() {
   const priceMatch = useRouteMatch(`/${coinId}/price`);
   const chartMatch = useRouteMatch(`/${coinId}/chart`);
   const history = useHistory();
-  console.log(state);
   const { data: infoData, isLoading: infoLoading } = useQuery<InfoData>(
     ["Info", coinId],
     () => fetchCoinInfo(coinId)
@@ -223,6 +222,7 @@ function Coin() {
               <span>{tickersData?.max_supply}</span>
             </OverviewItem>
           </Overview>
+
           <Tabs>
             <Tab isActive={chartMatch !== null}>
               <Link to={`/${coinId}/chart`}>Chart</Link>
@@ -231,12 +231,13 @@ function Coin() {
               <Link to={`/${coinId}/price`}>Price</Link>
             </Tab>
           </Tabs>
+
           <Switch>
             <Route path={`/${coinId}/chart`}>
               <Chart coinId={coinId} />
             </Route>
             <Route path={`/${coinId}/price`}>
-              <Price />
+              <Price coinId={coinId} />
             </Route>
           </Switch>
         </>

@@ -1,6 +1,7 @@
 import { useQuery } from "react-query";
 import { fetchCoinHistory } from "../api";
 import ApexChart from "react-apexcharts";
+
 interface IChartProps {
   coinId: string;
 }
@@ -16,7 +17,7 @@ interface IHistorical {
 }
 
 function Chart({ coinId }: IChartProps) {
-  const { data, isLoading } = useQuery<IHistorical[]>(
+  const { data: priceData, isLoading } = useQuery<IHistorical[]>(
     "ohlcv",
     () => fetchCoinHistory(coinId),
     { refetchInterval: 10000 }
@@ -28,57 +29,47 @@ function Chart({ coinId }: IChartProps) {
         "Loading Chart..."
       ) : (
         <ApexChart
-          type="line"
-          series={[{ name: "price", data: data?.map((price) => price.close) }]}
+          type="candlestick"
           options={{
-            chart: {
-              height: 500,
-              width: 500,
-              toolbar: {
-                show: false,
-              },
-              background: "transparent",
+            theme: {
+              mode: "dark",
             },
-            grid: {
-              show: false,
+            stroke: {
+              width: 1,
             },
+
             xaxis: {
               type: "datetime",
               axisTicks: {
                 show: false,
               },
-              axisBorder: {
-                show: false,
-              },
-              labels: {
-                show: false,
-              },
-              categories: data?.map((date) => date.time_close),
+              categories: priceData?.map((item) => item.time_close),
             },
             yaxis: {
-              show: false,
-            },
-            theme: {
-              mode: "dark",
-            },
-            stroke: {
-              curve: "smooth",
-              width: 3,
-            },
-            tooltip: {
-              y: {
-                formatter: (value) => "$" + value.toFixed(3),
+              tooltip: {
+                enabled: true,
               },
             },
-            fill: {
-              type: "gradient",
-              gradient: {
-                gradientToColors: ["blue"],
-                stops: [0, 100],
+            chart: {
+              width: 500,
+              height: 700,
+              background: "transparent",
+              toolbar: {
+                show: false,
               },
             },
-            colors: ["red"],
           }}
+          series={[
+            {
+              data: priceData?.map((item) => [
+                Date.parse(item.time_close),
+                item.open.toFixed(3),
+                item.high.toFixed(3),
+                item.low.toFixed(3),
+                item.close.toFixed(3),
+              ]),
+            },
+          ]}
         />
       )}
     </div>

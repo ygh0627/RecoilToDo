@@ -58,6 +58,7 @@ const CoinImage = styled.img`
 const CoinWrapper = styled.div`
   display: flex;
   align-items: center;
+  font-size: 24px;
 `;
 
 interface CoinInterface {
