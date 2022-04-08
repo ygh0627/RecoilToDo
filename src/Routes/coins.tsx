@@ -3,7 +3,6 @@ import { Link } from "react-router-dom";
 import styled from "styled-components";
 import { fetchCoins } from "../api";
 import { Helmet } from "react-helmet";
-
 const Title = styled.h1`
   color: ${(props) => props.theme.accentColor};
   font-size: 48px;
@@ -13,13 +12,15 @@ const Container = styled.div`
   width: 100%;
   max-width: 480px;
   margin: 0 auto;
+  position: relative;
 `;
 
 const Header = styled.header`
   height: 10vh;
   display: flex;
-  align-items: center;
   justify-content: center;
+  align-items: center;
+  position: relative;
 `;
 
 const CoinList = styled.ul`
@@ -61,6 +62,18 @@ const CoinWrapper = styled.div`
   font-size: 24px;
 `;
 
+const ToggleButton = styled.button`
+  position: absolute;
+  top: 25px;
+  right: 0px;
+  border-radius: 5px;
+  padding: 7px;
+  border: none;
+  background-color: black;
+  color: white;
+  cursor: pointer;
+`;
+
 interface CoinInterface {
   id: string;
   name: string;
@@ -82,6 +95,7 @@ function Coins() {
       <Header>
         <Title>Coins</Title>
       </Header>
+      <ToggleButton>Dark</ToggleButton>
       {isLoading ? (
         <Loader>Loading...</Loader>
       ) : (

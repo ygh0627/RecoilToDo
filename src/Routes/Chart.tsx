@@ -35,7 +35,7 @@ function Chart({ coinId }: IChartProps) {
               mode: "dark",
             },
             stroke: {
-              width: 1,
+              width: 3,
             },
 
             xaxis: {

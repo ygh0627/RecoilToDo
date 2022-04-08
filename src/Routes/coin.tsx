@@ -125,7 +125,7 @@ interface InfoData {
   last_data_at: string;
 }
 
-interface PriceData {
+export interface PriceData {
   id: string;
   name: string;
   symbol: string;
