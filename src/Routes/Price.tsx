@@ -17,8 +17,9 @@ const ChangeRate = styled(motion.div)`
   height: 40px;
   border-radius: 15px;
   display: flex;
-  justify-content: space-evenly;
+  justify-content: space-between;
   align-items: center;
+  padding: 0 30px;
 `;
 
 const PureText = styled.span`
@@ -26,7 +27,7 @@ const PureText = styled.span`
 `;
 
 const InfoText = styled.span<{ isMinus?: Boolean }>`
-  color: inherit;
+  color: ${(props) => (props.isMinus ? "blue" : "red")};
 `;
 
 const boxVariants = {
@@ -49,7 +50,10 @@ const innerVariants = {
 function Price({ coinId }: IPriceProps) {
   const { data: priceData, isLoading } = useQuery<PriceData>(
     [coinId, "PriceData"],
-    () => fetchCoinTickers(coinId)
+    () => fetchCoinTickers(coinId),
+    {
+      refetchInterval: 6000,
+    }
   );
 
   return (
@@ -61,27 +65,75 @@ function Price({ coinId }: IPriceProps) {
           <InfoContainer variants={boxVariants} initial="start" animate="end">
             <ChangeRate variants={innerVariants}>
               <PureText>Price changed in 15m :</PureText>
-              <InfoText>{priceData?.quotes.USD.percent_change_15m}</InfoText>
+              <InfoText
+                isMinus={
+                  priceData?.quotes.USD.percent_change_15m
+                    .toString()
+                    .slice(0, 1) === "-"
+                }
+              >
+                {`${priceData?.quotes.USD.percent_change_15m} %`}
+              </InfoText>
             </ChangeRate>
             <ChangeRate variants={innerVariants}>
               <PureText>Price changed in 30m :</PureText>
-              <InfoText>{priceData?.quotes.USD.percent_change_30m}</InfoText>
+              <InfoText
+                isMinus={
+                  priceData?.quotes.USD.percent_change_30m
+                    .toString()
+                    .slice(0, 1) === "-"
+                }
+              >
+                {`${priceData?.quotes.USD.percent_change_30m} %`}
+              </InfoText>
             </ChangeRate>
             <ChangeRate variants={innerVariants}>
               <PureText>Price changed in 1h :</PureText>
-              <InfoText>{priceData?.quotes.USD.percent_change_1h}</InfoText>
+              <InfoText
+                isMinus={
+                  priceData?.quotes.USD.percent_change_1h
+                    .toString()
+                    .slice(0, 1) === "-"
+                }
+              >
+                {`${priceData?.quotes.USD.percent_change_1h} %`}
+              </InfoText>
             </ChangeRate>
             <ChangeRate variants={innerVariants}>
               <PureText>Price changed in 6h :</PureText>
-              <InfoText>{priceData?.quotes.USD.percent_change_6h}</InfoText>
+              <InfoText
+                isMinus={
+                  priceData?.quotes.USD.percent_change_6h
+                    .toString()
+                    .slice(0, 1) === "-"
+                }
+              >
+                {`${priceData?.quotes.USD.percent_change_6h} %`}
+              </InfoText>
             </ChangeRate>
             <ChangeRate variants={innerVariants}>
               <PureText>Price changed in 24h :</PureText>
-              <InfoText>{priceData?.quotes.USD.percent_change_24h}</InfoText>
+              <InfoText
+                isMinus={
+                  priceData?.quotes.USD.percent_change_24h
+                    .toString()
+                    .slice(0, 1) === "-"
+                }
+              >
+                {`${priceData?.quotes.USD.percent_change_24h} %`}
+              </InfoText>
             </ChangeRate>
             <ChangeRate variants={innerVariants}>
               <PureText>Price changed in 7d :</PureText>
-              <InfoText>{priceData?.quotes.USD.percent_change_7d}</InfoText>
+              <InfoText
+                isMinus={
+                  priceData?.quotes.USD.percent_change_7d
+                    .toString()
+                    .slice(0, 1) === "-"
+                }
+              >
+                {`${priceData?.quotes.USD.percent_change_7d} %`}
+              </InfoText>
             </ChangeRate>
           </InfoContainer>
         </>

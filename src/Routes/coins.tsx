@@ -3,6 +3,8 @@ import { Link } from "react-router-dom";
 import styled from "styled-components";
 import { fetchCoins } from "../api";
 import { Helmet } from "react-helmet";
+import { useState } from "react";
+
 const Title = styled.h1`
   color: ${(props) => props.theme.accentColor};
   font-size: 48px;
@@ -83,10 +85,25 @@ interface CoinInterface {
   is_active: boolean;
   type: string;
 }
+const ButtonBox = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0px 25px;
+`;
 
+const Button = styled.span`
+  font-size: 40px;
+  &:hover {
+    color: ${(props) => props.theme.accentColor};
+  }
+  cursor: pointer;
+`;
+
+const OFFSET = 6;
 function Coins() {
   const { data, isLoading } = useQuery<CoinInterface[]>("allCoins", fetchCoins);
-
+  const [counter, setCounter] = useState(0);
   return (
     <Container>
       <Helmet>
@@ -95,31 +112,58 @@ function Coins() {
       <Header>
         <Title>Coins</Title>
       </Header>
+
       <ToggleButton>Dark</ToggleButton>
       {isLoading ? (
         <Loader>Loading...</Loader>
       ) : (
         <CoinList>
-          {data?.slice(0, 100).map((coin) => (
-            <Coin key={coin.id}>
-              <Link
-                to={{
-                  pathname: `/${coin.id}`,
-                  state: { name: coin.name, coinId: coin.id },
-                }}
-              >
-                <CoinWrapper>
-                  <CoinImage
-                    alt="coin images"
-                    src={`https://cryptocurrencyliveprices.com/img/${coin?.id}.png`}
-                  />
-                  {coin.name} &rarr;
-                </CoinWrapper>
-              </Link>
-            </Coin>
-          ))}
+          {data
+            ?.slice(0, 100)
+            .slice(OFFSET * counter, OFFSET * counter + OFFSET)
+            .map((coin) => (
+              <Coin key={coin.id}>
+                <Link
+                  to={{
+                    pathname: `/${coin.id}`,
+                    state: { name: coin.name, coinId: coin.id },
+                  }}
+                >
+                  <CoinWrapper>
+                    <CoinImage
+                      alt="coin images"
+                      src={`https://cryptocurrencyliveprices.com/img/${coin?.id}.png`}
+                    />
+                    {coin.name} &rarr;
+                  </CoinWrapper>
+                </Link>
+              </Coin>
+            ))}
         </CoinList>
       )}
+      <ButtonBox>
+        <Button
+          onClick={() =>
+            setCounter((curr) => {
+              if (curr <= 0) return 16;
+              return curr - 1;
+            })
+          }
+        >
+          ⇠
+        </Button>
+        <Button
+          onClick={() =>
+            setCounter((curr) => {
+              console.log(curr);
+              if (curr > 15) return 0;
+              return curr + 1;
+            })
+          }
+        >
+          ⇢
+        </Button>
+      </ButtonBox>
     </Container>
   );
 }
