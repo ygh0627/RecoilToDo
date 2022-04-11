@@ -2,8 +2,8 @@ import { useQuery } from "react-query";
 import { Link } from "react-router-dom";
 import styled from "styled-components";
 import { fetchCoins } from "../api";
-import { Helmet } from "react-helmet";
 import { useState } from "react";
+import { Helmet, HelmetProvider } from "react-helmet-async";
 
 const Title = styled.h1`
   color: ${(props) => props.theme.accentColor};
@@ -106,64 +106,66 @@ function Coins() {
   const [counter, setCounter] = useState(0);
   return (
     <Container>
-      <Helmet>
-        <title>Coins</title>
-      </Helmet>
-      <Header>
-        <Title>Coins</Title>
-      </Header>
+      <HelmetProvider>
+        <Helmet>
+          <title>Coins</title>
+        </Helmet>
+        <Header>
+          <Title>Coins</Title>
+        </Header>
 
-      <ToggleButton>Dark</ToggleButton>
-      {isLoading ? (
-        <Loader>Loading...</Loader>
-      ) : (
-        <CoinList>
-          {data
-            ?.slice(0, 100)
-            .slice(OFFSET * counter, OFFSET * counter + OFFSET)
-            .map((coin) => (
-              <Coin key={coin.id}>
-                <Link
-                  to={{
-                    pathname: `/${coin.id}`,
-                    state: { name: coin.name, coinId: coin.id },
-                  }}
-                >
-                  <CoinWrapper>
-                    <CoinImage
-                      alt="coin images"
-                      src={`https://cryptocurrencyliveprices.com/img/${coin?.id}.png`}
-                    />
-                    {coin.name} &rarr;
-                  </CoinWrapper>
-                </Link>
-              </Coin>
-            ))}
-        </CoinList>
-      )}
-      <ButtonBox>
-        <Button
-          onClick={() =>
-            setCounter((curr) => {
-              if (curr <= 0) return 16;
-              return curr - 1;
-            })
-          }
-        >
-          ⇠
-        </Button>
-        <Button
-          onClick={() =>
-            setCounter((curr) => {
-              console.log(curr);
-              if (curr > 15) return 0;
-              return curr + 1;
-            })
-          }
-        >
-          ⇢
-        </Button>
-      </ButtonBox>
+        <ToggleButton>Dark</ToggleButton>
+        {isLoading ? (
+          <Loader>Loading...</Loader>
+        ) : (
+          <CoinList>
+            {data
+              ?.slice(0, 100)
+              .slice(OFFSET * counter, OFFSET * counter + OFFSET)
+              .map((coin) => (
+                <Coin key={coin.id}>
+                  <Link
+                    to={{
+                      pathname: `/${coin.id}`,
+                      state: { name: coin.name, coinId: coin.id },
+                    }}
+                  >
+                    <CoinWrapper>
+                      <CoinImage
+                        alt="coin images"
+                        src={`https://cryptocurrencyliveprices.com/img/${coin?.id}.png`}
+                      />
+                      {coin.name} &rarr;
+                    </CoinWrapper>
+                  </Link>
+                </Coin>
+              ))}
+          </CoinList>
+        )}
+        <ButtonBox>
+          <Button
+            onClick={() =>
+              setCounter((curr) => {
+                if (curr <= 0) return 16;
+                return curr - 1;
+              })
+            }
+          >
+            ⇠
+          </Button>
+          <Button
+            onClick={() =>
+              setCounter((curr) => {
+                console.log(curr);
+                if (curr > 15) return 0;
+                return curr + 1;
+              })
+            }
+          >
+            ⇢
+          </Button>
+        </ButtonBox>
+      </HelmetProvider>
     </Container>
   );
 }
