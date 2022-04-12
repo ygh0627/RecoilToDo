@@ -4,6 +4,8 @@ import styled from "styled-components";
 import { fetchCoins } from "../api";
 import { useState } from "react";
 import { Helmet, HelmetProvider } from "react-helmet-async";
+import { useRecoilValue, useSetRecoilState } from "recoil";
+import { isDarkAtom } from "../atoms";
 
 const Title = styled.h1`
   color: ${(props) => props.theme.accentColor};
@@ -30,10 +32,11 @@ const CoinList = styled.ul`
 `;
 
 const Coin = styled.li`
-  background-color: white;
-  color: ${(props) => props.theme.bgColor};
+  background-color: ${(props) => props.theme.cardBgColor};
+  color: ${(props) => props.theme.textColor};
   border-radius: 15px;
   margin-bottom: 10px;
+  border: 1px solid white;
   a {
     padding: 20px;
     transition: color 0.2s ease-in;
@@ -71,8 +74,8 @@ const ToggleButton = styled.button`
   border-radius: 5px;
   padding: 7px;
   border: none;
-  background-color: black;
-  color: white;
+  background-color: green;
+  color: ${(props) => props.theme.bgColor};
   cursor: pointer;
 `;
 
@@ -102,6 +105,8 @@ const Button = styled.span`
 
 const OFFSET = 6;
 function Coins() {
+  const setterFn = useSetRecoilState(isDarkAtom);
+
   const { data, isLoading } = useQuery<CoinInterface[]>("allCoins", fetchCoins);
   const [counter, setCounter] = useState(0);
   return (
@@ -114,7 +119,9 @@ function Coins() {
           <Title>Coins</Title>
         </Header>
 
-        <ToggleButton>Dark</ToggleButton>
+        <ToggleButton onClick={() => setterFn((prev) => !prev)}>
+          Toggle
+        </ToggleButton>
         {isLoading ? (
           <Loader>Loading...</Loader>
         ) : (
